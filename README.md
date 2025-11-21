@@ -8,6 +8,7 @@ This provides a simple, at a glance way to check prices for Octopus Energy's var
 
 **Based on the brilliant [lozzd/octopus-energy-rates-card](https://github.com/lozzd/octopus-energy-rates-card), with a few minor tweaks for usability :)**
 
+![screenshot_2](assets/newscreenshot1-noplunge.png)
 ---
 
 #### Installation:
@@ -187,7 +188,7 @@ extremelimit: 50
 
 Note that it is possible for you to mix and match fixed values and entities as you see fit.
 
-#### Screenshots
+#### More screenshots
 ![screenshot_1](assets/import.png)
 ![screenshot_2](assets/export.png)
 
