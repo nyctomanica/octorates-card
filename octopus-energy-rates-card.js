@@ -1,11 +1,11 @@
-class OctopusEnergyRatesCard extends HTMLElement {
+class OctoratesCard extends HTMLElement {
     set hass(hass) {
         const config = this._config;
         if (!this.content) {
             const card = document.createElement('ha-card');
             card.header = config.title;
             this.content = document.createElement('div');
-            this.content.style.padding = '0 16px 16px';
+            this.content.style.padding = '16px 16px 16px';
 
             const style = document.createElement('style');
             style.textContent = `
@@ -58,8 +58,11 @@ class OctopusEnergyRatesCard extends HTMLElement {
                 text-align:center;
                 vertical-align: middle;
             }
+			td.time_darkred{
+                border-bottom: 1px solid Maroon;
+            }
             td.time_red{
-                border-bottom: 1px solid Tomato;
+                border-bottom: 1px solid red;
             }
             td.time_orange{
                 border-bottom: 1px solid orange;
@@ -88,13 +91,17 @@ class OctopusEnergyRatesCard extends HTMLElement {
                 border-top-right-radius:15px;
                 border-bottom-right-radius:15px;
             }
+			td.darkred {
+                border: 2px solid Maroon;
+                background-color: Maroon;
+            }
             td.red {
-                border: 2px solid Tomato;
-                background-color: Tomato;
+                border: 2px solid red;
+                background-color: red;
             }
             td.orange {
-                border: 2px solid orange;
-                background-color: orange;
+                border: 2px solid darkorange;
+                background-color: darkorange;
             }
             td.green {
                 border: 2px solid MediumSeaGreen;
@@ -138,7 +145,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         }
         this.lastRefreshTimestamp = currentTime;
 
-        const colours_import = ['lightgreen', 'green', 'orange', 'red', 'blue', 'cheapest', 'cheapestblue'];
+        const colours_import = ['lightgreen', 'green', 'orange', 'red', 'darkred', 'blue', 'cheapest', 'cheapestblue'];
         const colours_export = ['red', 'green', 'orange', 'green'];
         const currentEntityId = config.currentEntity;
         const futureEntityId = config.futureEntity;
@@ -170,6 +177,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
         var lowlimit = config.lowlimit;
         var mediumlimit = config.mediumlimit;
         var highlimit = config.highlimit;
+		var extremelimit = config.extremelimit;
 
         // Check if we've received a number, if not, assume they are entities
         // and read them from the state
@@ -181,6 +189,9 @@ class OctopusEnergyRatesCard extends HTMLElement {
         }
         if (isNaN(highlimit)) {
             highlimit = parseFloat(hass.states[highlimit].state)
+        }
+		if (isNaN(extremelimit)) {
+            extremelimit = parseFloat(hass.states[extremelimit].state)
         }
 
         const unitstr = config.unitstr;
@@ -375,12 +386,13 @@ class OctopusEnergyRatesCard extends HTMLElement {
             // Apply bold styling if the current time is a target time
             var boldStyle = isCurrentTime ? "current " : "";
             boldStyle = isTargetTime ? boldStyle + "time_highlight" : boldStyle + "";
-            if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate > 0)) colour = colours[5];
-            else if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate <= 0)) colour = colours[6];
+            if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate > 0)) colour = colours[6];
+            else if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate <= 0)) colour = colours[7];
+			else if (valueToDisplay > extremelimit) colour = colours[4]; //red (import) / green (export)
             else if (valueToDisplay > highlimit) colour = colours[3]; //red (import) / green (export)
             else if (valueToDisplay > mediumlimit) colour = colours[2]; // orange (import) / orange (export)
             else if (valueToDisplay > lowlimit) colour = colours[0]; // lightgreen  (import) / red (export)
-            else if (valueToDisplay <= 0) colour = colours[4]; // below 0 - blue (import/export)
+            else if (valueToDisplay <= 0) colour = colours[5]; // below 0 - blue (import/export)
 
             if (showpast || (date - Date.parse(new Date()) > -1800000)) {
                 table = table.concat("<tr class='rate_row'><td class='time " + boldStyle + " " + "time_" + colour + targetTimeBackgroundColor + "'>" + targetTimePrefix + date_locale + time_locale +
@@ -446,6 +458,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             // Controls the title of the card
             title: 'Agile Rates',
             // Colour controls:
+			// If the price is above extremelimit, the row is marked darkred
             // If the price is above highlimit, the row is marked red.
             // If the price is above mediumlimit, the row is marked orange.
             // If the price is above lowlimit, the row is marked dark green.
@@ -454,6 +467,7 @@ class OctopusEnergyRatesCard extends HTMLElement {
             lowlimit: 5,
             mediumlimit: 20,
             highlimit: 30,
+			extremelimit: 50,
             // Entity to use for dynamic limits, above are ignored if limitEntity is set. 
             limitEntity: null,
             highLimitMultiplier: 1.1,
@@ -491,12 +505,12 @@ class OctopusEnergyRatesCard extends HTMLElement {
     }
 }
 
-customElements.define('octopus-energy-rates-card', OctopusEnergyRatesCard);
+customElements.define('octorates-card', OctoratesCard);
 // Configure the preview in the Lovelace card picker
 window.customCards = window.customCards || [];
 window.customCards.push({
-    type: 'octopus-energy-rates-card',
-    name: 'Octopus Energy Rates Card',
+    type: 'octorates-card',
+    name: 'Octorates Card',
     preview: false,
     description: 'This card displays the energy rates for Octopus Energy',
 });
