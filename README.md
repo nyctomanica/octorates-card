@@ -1,40 +1,49 @@
-# Lovelace custom card for Octopus Energy Rate display
+# OctoRates, a custom card for Home Assistant
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration)
 
-This lovelace card displays the Octopus Energy rate prices per each 30 minute slot, pulling the data from sensors of the the excellent [BottlecapDave/HomeAssistant-OctopusEnergy](https://github.com/BottlecapDave/) integration.
+The OctoRates card displays your Octopus Energy smart tariff rates for each 30 minute slot, pulling data from the excellent [BottlecapDave/HomeAssistant-OctopusEnergy](https://github.com/BottlecapDave/) and [urbanframe/octopus_energy_tariff_comparison](https://github.com/urbanframe/octopus_energy_tariff_comparison) integrations.
 
-This provides a convenient, at a glance way to observe the prices on tariffs that change their price every 30 minutes, for example Octopus Agile.
+This provides a simple, at a glance way to check prices for Octopus Energy's various smart tariffs (eg Agile, Go, etc)
 
-#### Installation
+**Based on the brilliant [lozzd/octopus-energy-rates-card](https://github.com/lozzd/octopus-energy-rates-card), with a few minor tweaks for usability :)**
+
+---
+
+#### Installation:
 ##### HACS
-The easiest way to install it is via [HACS (Home Assistant Community Store)](https://github.com/hacs/frontend). This will ensure you get updates automatically too. 
+The easiest way to install this card is via [HACS (Home Assistant Community Store)](https://github.com/hacs/frontend). This will ensure you get updates automatically too. 
 
-Simply click this button to go directly to the details page:
+Just click this button to go directly to the details page:
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=lozzd&repository=octopus-energy-rates-card&category=plugin)
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=nyctomanica&repository=octorates-card&category=plugin)
 
 In the Home Assistant UI:
 * Use HACS -> Frontend -> Top Right Menu -> Custom repositories
-* Enter a repo of `lozzd/octopus-energy-rates-card` and category of "Lovelace", and click the Add button
+* Enter a repo of `nyctomanica/octorates-card` and category of "Lovelace", and click the Add button
 * Click "Explore & Download Repositories" and start searching for "octo" and you should see the entry
 * Click "Download" in the bottom right
 
-This should automatically configure all the resources, so you can now skip to **Configuration**.
+This should automatically configure all the resources, so you can now skip to **Getting Started**.
 
 ##### Manually
 You can also install manually by downloading/copying the Javascript file in to `$homeassistant_config_dir/www/community/` and then add the Javascript file to Lovelace in the Home Assistant UI by using
 Settings -> Dashboards -> Top Right Menu -> Resources
 
-#### Configuration
-Add the card to your dashboard using **Add Card -> Custom: Octopus Energy Rates Card**.
+---
+
+#### Getting started:
+Add the card to your dashboard using **Add Card -> Custom: Octorates Card**.
 
 You'll need to then configure the yaml yourself - the `type` part is filled out for you. 
 
 
 The only **required** key is the name of the entity sensor that contains the rates. At least one of the "current", "previous" or "next" day rate entities will need to be selected. 
 
-As of version 9.0.0 of the Octopus Energy integration, these entities are now called `events` and not enabled by default. In the Octopus Integration settings, filter by disabled entities and then search for the last section (e.g. `current_day_rates`) then press the button to enable the entity. It may take up to an hour for the data to be present, so don't panic if the card doesn't work immediately.
+##### BottlecapDave's integration
+
+As of version 9.0.0 of the Octopus Energy integration, the required entities are now called `events` and not enabled by default. 
+In the Octopus Integration settings, filter by disabled entities and then search for the last section (e.g. `current_day_rates`) then press the button to enable the entity. It may take up to an hour for the data to be present, so don't panic if the card doesn't work immediately.
 
 The easiest way to find that entity name is by opening the Search within Home Assistant: search for `current_rate` -> click the chosen result -> choose the Settings tab -> copy `Entity ID`.
 
@@ -43,25 +52,26 @@ The easiest way to find that entity name is by opening the Search within Home As
 Here's an example yaml configuration - obviously replacing `<your_id_here>` with your data from above.
 
 ```
-type: custom:octopus-energy-rates-card
+type: custom:octorates-card
 currentEntity: event.octopus_energy_electricity_<your_id_here>_current_day_rates
 cols: 2
 hour12: false
 showday: true
 showpast: false
 title: Octopus Import
-unitstr: p
+unitstr: p/kWh
 lowlimit: 15
-mediumlimit: 20
+mediumlimit: 25
 highlimit: 30
+extremelimit: 50
 roundUnits: 2
 cheapest: true
 multiplier: 100
 
 ```
-and here is one for export rates:
+and here is one for export rates;
 ```
-type: custom:octopus-energy-rates-card
+type: custom:octorates-card
 pastEntity: event.octopus_energy_electricity_<your_id_here>_export_previous_day_rates
 currentEntity: event.octopus_energy_electricity_<your_id_here>_export_current_day_rates
 futureEntity: event.octopus_energy_electricity_22l4132637_<your_id_here>_export_next_day_rates
@@ -80,11 +90,42 @@ multiplier: 100
 exportrates: true
 ```
 
-Here's a breakdown of all the available configuration items:
+##### urbanframe's integration
+
+If you're using urbanframe's tariff comparison integration, you'll instead need to find the correct `event` entity for the tariff you'd like to display rates for.
+This will be used as your `currentEntity` value, and shows all currently available rates (not just the current/next/previous day's).
+
+By default, these are `event.agile_octopus_rates` for Agile, `event.octopus_go_rates` for Go, and `event.cosy_octopus_rates` for Cosy.
+
+Here's an example yaml configuration for the Agile Octopus tariff;
+
+```
+type: custom:octorates-card
+currentEntity: event.agile_octopus_rates
+cols: 2
+hour12: false
+showday: true
+showpast: false
+title: Octopus Import
+unitstr: p/kWh
+lowlimit: 15
+mediumlimit: 25
+highlimit: 30
+extremelimit: 50
+roundUnits: 2
+cheapest: true
+multiplier: 100
+
+```
+
+---
+#### Configuration options:
+
+Here's a breakdown of all available configuration items;
 
 | Name          | Optional | Default       | Description                                                                                                                                          |
 |---------------|----------|---------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| currentEntity | N        | N/A           | Name of the sensor that contains the current rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                  |
+| currentEntity | N        | N/A           | Name of the sensor that contains the current rates you want to render, generated from the `HomeAssistant-OctopusEnergy` or `octopus_energy_tariff_comparison` integration                  |
 | pastEntity    | Y        | N/A           | Name of the sensor that contains the past rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                     |
 | futureEntity  | Y        | N/A           | Name of the sensor that contains the future rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                   |
 | targetTimesEntities  | Y        | N/A           | Map with the name of the sensors that contain the Target Rate Sensor, generated from the `HomeAssistant-OctopusEnergy` integration. [More here: doc](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/setup/target_rate.md)                  |
@@ -94,12 +135,12 @@ Here's a breakdown of all the available configuration items:
 | title         | Y        | "Agile Rates" | The title of the card in the dashboard                                                                                                               |
 | lowlimit      | Y        |  5 (pence)    | If the price is above `lowlimit`, the row is marked dark green. (this option is only applicable for import rates)                                    |
 | mediumlimit   | Y        | 20 (pence)    | If the price is above `mediumlimit`, the row is marked yellow                                                                                        |
-| highlimit     | Y        | 30 (pence)    | If the price is above `highlimit`, the row is marked red.                                                                                            |
-| limitEntity   | Y        | N/A           | Name of the sensor tracking the unit rate to be used to calculate limits. e.g. average rate for the last 12 hours If this is set, MediumLimit and HighLimit are ignored|
-| highLimitMultiplier   | Y  | 1.1         | Multiplication factor for Limit Entity, 1.1 = 110% of the entity value.                                                                             |
+| highlimit     | Y        | 30 (pence)    | If the price is above `highlimit`, the row is marked red.   
+| extremelimit  | Y        | 50 (pence)    | If the price is above `extremelimit`, the row is marked dark red.|
+| limitEntity   | Y        | N/A           | Name of the sensor tracking the unit rate to be used to calculate limits. e.g. average rate for the last 12 hours If this is set, MediumLimit, HighLimit and ExtremeLimit are ignored|
+| highLimitMultiplier   | Y  | 1.1         | Multiplication factor for high/extreme limit entities, 1.1 = 110% of the entity value.                                                                             |
 | mediumLimitMultiplier | Y  | 0.8         | Multiplication factor for Limit Entity, 0.8 = 80% of the entity value.                                                                              |
-| roundUnits    | Y        | 2             | Controls how many decimal places to round the rates to                                                                                               |
-| showunits     | Y        | N/A           | No longer supported. Never worked. Please set a blank string using `unitstr` (see below)                                                             |
+| roundUnits    | Y        | 2             | Controls how many decimal places to round the rates to                                                                                               |                                                           |
 | unitstr       | Y        | "p/kWh"       | The unit to show after the rate in the table. Set to an empty string for none.                                                                       |
 | exportrates   | Y        | false         | Reverses the colours for use when showing export rates instead of import                                                                             |
 | hour12        | Y        | true          | Show the times in 12 hour format if `true`, and 24 hour format if `false`                                                                            |
@@ -112,7 +153,8 @@ Here's a breakdown of all the available configuration items:
 
 #### A note on colouring
 
-* The card is hardcoded to display plunge pricing (e.g, below 0p/kWh) as blue. 
+* The card is hardcoded to display plunge pricing (e.g, below 0p/kWh) as blue.
+* If the price is above `extremeLimit`, then the row is in dark red
 * If the price is above `highLimit`, then the row is in red
 * If the price is above `mediumLimit`, then the row is coloured orange
 * if the price is above `lowLimit`, then the row is coloured dark green
@@ -121,7 +163,7 @@ Here's a breakdown of all the available configuration items:
 * Cheapest rate is coloured in light green (above 0) / light blue (below 0)
 * If targetTimesEntities is included in the config, the target hours will be highlighted in Navy by default (can be changed via the config)
 
-#### A note on `lowlimit` and `mediumlimit` and `highlimit` options
+#### A note on `lowlimit`, `mediumlimit`. `highlimit` and `extremelimit` options
 
 You can either set these to a fixed value, or you can specify the entity which contains the value you want to use for these limits.
 
@@ -131,14 +173,16 @@ An example of how the fixed values look in the config:
 lowlimit: 15
 mediumlimit: 20
 highlimit: 30
+extremelimit: 50
 ```
 
 And here's an example of how to use entities for the limits:
 
 ```yaml
 lowlimit: sensor.average_rate_last_12_hours
-mediumlimit: input_number.medium_rate_limit
+mediumlimit: sensor.current_flexible_rate
 highlimit: 30
+extremelimit: 50
 ```
 
 Note that it is possible for you to mix and match fixed values and entities as you see fit.
@@ -147,13 +191,15 @@ Note that it is possible for you to mix and match fixed values and entities as y
 ![screenshot_1](assets/import.png)
 ![screenshot_2](assets/export.png)
 
+*todo: get new export/target rate screenshots*
+
 ##### Advanced Configurations
 
 Import rates with the Target Rates and future rates entities specified:
 ```
-type: custom:octopus-energy-rates-card
-currentEntity: event.octopus_energy_electricity_22l4132637_1900026354329_current_day_rates
-futureEntity: event.octopus_energy_electricity_22l4132637_1900026354329_next_day_rates
+type: custom:octorates-card
+currentEntity: event.octopus_energy_electricity_<your_id_here>_export_current_day_rates
+futureEntity: eevent.octopus_energy_electricity_<your_id_here>_export_next_day_rates
 targetTimesEntities:
   binary_sensor.octopus_energy_target_intermittent_best_charging_rates:
 cols: 3
@@ -172,10 +218,10 @@ multiplier: 100
 
 Here is an example on how you can make use of the `targetTimesEntities` property to highlight the target hours in the card. It also contains an example for `additionalDynamicLimits` property to highlight when a specific threshold is reached.
 ```
-type: custom:octopus-energy-rates-card
-pastEntity: event.octopus_energy_electricity_22l4132637_1900026354329_previous_day_rates
-futureEntity: event.octopus_energy_electricity_22l4132637_1900026354329_next_day_rates
-currentEntity: event.octopus_energy_electricity_22l4132637_1900026354329_current_day_rates
+type: custom:octorates-card
+pastEntity: event.octopus_energy_electricity_<your_id_here>_previous_day_rates
+futureEntity: event.octopus_energy_electricity_<your_id_here>_next_day_rates
+currentEntity: event.octopus_energy_electricity_<your_id_here>_current_day_rates
 cols: 2
 showday: true
 showpast: false
@@ -213,7 +259,3 @@ If you're interested to find emojis for `prefix`, you might find it the easiest 
 
 You can see how the above configuration looks like in the screenshot below:
 ![screenshot_2](assets/screenshot_2.png)
-
-
-#### Thanks/inspiration
-This card was based on and reworked from the code [markgdev/home-assistant_OctopusAgile](https://github.com/markgdev/home-assistant_OctopusAgile/tree/master/custom_cards) which is no longer maintained. 
