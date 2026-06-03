@@ -1,14 +1,21 @@
-# OctoRates, a custom card for Home Assistant
+# OctoRates, a customisable custom card for Home Assistant!
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration)
 
 The OctoRates card displays your Octopus Energy smart tariff rates for each 30 minute slot, pulling data from the excellent [BottlecapDave/HomeAssistant-OctopusEnergy](https://github.com/BottlecapDave/) and [urbanframe/octopus_energy_tariff_comparison](https://github.com/urbanframe/octopus_energy_tariff_comparison) integrations.
 
-This provides a simple, at a glance way to check prices for Octopus Energy's various smart tariffs (eg Agile, Go, etc)
+This provides a simple, customisable way to check prices for Octopus Energy's various smart tariffs (eg Agile, Go, etc)
 
-**Based on the brilliant [lozzd/octopus-energy-rates-card](https://github.com/lozzd/octopus-energy-rates-card), with a few minor tweaks for usability :)**
+**Based on the brilliant [lozzd/octopus-energy-rates-card](https://github.com/lozzd/octopus-energy-rates-card), with a few tweaks to make it better! :)**
 
-![screenshot_2](assets/newscreenshot1-noplunge.png)
+Compared to lozzd's card, this version adds:
+* A new `extremelimit` to show REALLY expensive slots
+* Fully customisable slot colours, so you can really make it yours!
+* Nicer card padding for use without margins
+
+However, it also BREAKS export rates (for now), so I'd only recommend using this for import!
+
+![screenshot_2](assets/NewImport.png)
 ---
 
 #### Installation:
@@ -21,14 +28,14 @@ Just click this button to go directly to the details page:
 
 In the Home Assistant UI:
 * Use HACS -> Frontend -> Top Right Menu -> Custom repositories
-* Enter a repo of `nyctomanica/octorates-card` and category of "Lovelace", and click the Add button
-* Click "Explore & Download Repositories" and start searching for "octo" and you should see the entry
-* Click "Download" in the bottom right
+* Enter a repo of `nyctomanica/octorates-card` and type of "Dashboard", then click the Add button
+* Click "Explore & Download Repositories" and start searching for "octo" and you should see this card
+* Click "Download" in the bottom right, and you're ready to go!
 
 This should automatically configure all the resources, so you can now skip to **Getting Started**.
 
 ##### Manually
-You can also install manually by downloading/copying the Javascript file in to `$homeassistant_config_dir/www/community/` and then add the Javascript file to Lovelace in the Home Assistant UI by using
+You can also install manually by downloading/copying the Javascript file in to `$homeassistant_config_dir/www/community/octorates-card` and then add the Javascript file to Lovelace in the Home Assistant UI by using
 Settings -> Dashboards -> Top Right Menu -> Resources
 
 ---
@@ -50,7 +57,7 @@ The easiest way to find that entity name is by opening the Search within Home As
 
 (The format is, for example: `event.octopus_energy_electricity_{METER_SERIAL_NUMBER}}_{{MPAN_NUMBER}}_current_day_rates`)
 
-Here's an example yaml configuration - obviously replacing `<your_id_here>` with your data from above.
+Here's an example yaml configuration - obviously replacing `<your_id_here>` with your correct entity name from above.
 
 ```
 type: custom:octorates-card
@@ -130,7 +137,7 @@ Here's a breakdown of all available configuration items;
 | pastEntity    | Y        | N/A           | Name of the sensor that contains the past rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                     |
 | futureEntity  | Y        | N/A           | Name of the sensor that contains the future rates you want to render, generated from the `HomeAssistant-OctopusEnergy` integration                   |
 | targetTimesEntities  | Y        | N/A           | Map with the name of the sensors that contain the Target Rate Sensor, generated from the `HomeAssistant-OctopusEnergy` integration. [More here: doc](https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/setup/target_rate.md)                  |
-| cols          | Y        | 1             | How many columns to break the rates in to, pick the one that fits best with how wide your card is                                                    |
+| cols          | Y        | 3             | How many columns to break the rates in to, pick the one that fits best with how wide your card is                                                    |
 | showpast      | Y        | false         | Show the rates that have already happened today. Provides a simpler card when there are two days of dates to show                                    |
 | showday       | Y        | false         | Shows the (short) day of the week next to the time for each rate. Helpful if it's not clear which day is which if you have a lot of rates to display |
 | title         | Y        | "Agile Rates" | The title of the card in the dashboard                                                                                                               |
@@ -151,17 +158,25 @@ Here's a breakdown of all available configuration items;
 | rateListLimit      | Y        | N/A           | Limit number of rates to display, useful if you only want to only show next 4 rates                                                             |
 | cardRefreshIntervalSeconds | Y | 60      | How often the card should refresh to avoid using lots of CPU, defaults to once a minute                                                              |
 | additionalDynamicLimits | Y | N/A       | List of additional limits to be displayed in the card. This is very similar to `targetTimesEntities` but it supports entities that have a single value state (for example an input number or a sensor). The color specified here takes precedence compared to the one in `targetTimesEntities`. |
+| customDarkRed  | Y   | Maroon  | Custom colour for prices above `extremelimit` |
+| customRed  | Y   | red  | Custom colour for prices above `highlimit` |
+| customOrange  | Y   | orange  | Custom colour for prices above `mediumlimit` |
+| customGreen  | Y   | ForestGreen  | Custom colour for prices above `lowlimit` |
+| customLightGreen  | Y   | MediumSeaGreen  | Custom colour for prices above zero and below `lowlimit` |
+| customBlue  | Y   | #391CD9  | Custom colour for prices below zero |
+| customCheapestGreen  | Y   | LightGreen  | Custom colour for cheapest price if above zero |
+| customCheapestBlue  | Y   | LightBlue  | Custom colour for cheapest price if below zero |
 
 #### A note on colouring
 
-* The card is hardcoded to display plunge pricing (e.g, below 0p/kWh) as blue.
-* If the price is above `extremeLimit`, then the row is in dark red
-* If the price is above `highLimit`, then the row is in red
-* If the price is above `mediumLimit`, then the row is coloured orange
-* if the price is above `lowLimit`, then the row is coloured dark green
-* if the price is below `lowLimit`, then the row is coloured green
-* These are reversed if `exportrates` is set to `true` (export rates have only 3 colours, red, orange and green)
-* Cheapest rate is coloured in light green (above 0) / light blue (below 0)
+* If the price is below zero, then the row is in blue / `customBlue`
+* If the price is above `extremeLimit`, then the row is coloured dark red / `customDarkRed`
+* If the price is above `highLimit`, then the row is coloured red / `customRed`
+* If the price is above `mediumLimit`, then the row is coloured orange / `customOrange`
+* if the price is above `lowLimit`, then the row is coloured green / `customGreen`
+* if the price is below `lowLimit`, then the row is coloured light green / `customLightGreen`
+* These are reversed if `exportrates` is set to `true` (export rates have only 3 colours, red/`customRed`, orange/`customOrange` and green/`customGreen`)
+* Cheapest rate is coloured in light green or `customCheapestGreen` (above 0) / light blue or `customCheapestBlue` (below 0)
 * If targetTimesEntities is included in the config, the target hours will be highlighted in Navy by default (can be changed via the config)
 
 #### A note on `lowlimit`, `mediumlimit`. `highlimit` and `extremelimit` options
@@ -189,10 +204,10 @@ extremelimit: 50
 Note that it is possible for you to mix and match fixed values and entities as you see fit.
 
 #### More screenshots
-![screenshot_1](assets/import.png)
-![screenshot_2](assets/export.png)
+![screenshot_1](assets/NewImportWithTitle.png)
+![screenshot_2](assets/NewExport.png)
 
-*todo: get new export/target rate screenshots*
+*todo: fix colours for export, as I don't have export!*
 
 ##### Advanced Configurations
 
