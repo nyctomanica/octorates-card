@@ -7,6 +7,15 @@ class OctoratesCard extends HTMLElement {
             this.content = document.createElement('div');
             this.content.style.padding = '16px 16px 16px';
 
+            var customDarkRed = config.customDarkRed;
+            var customRed = config.customRed;
+            var customOrange = config.customOrange;
+            var customGreen = config.customGreen;
+            var customLightGreen = config.customLightGreen;
+            var customBlue = config.customBlue;
+            var customCheapestGreen = config.customCheapestGreen;
+            var customCheapestBlue = config.customCheapestBlue;
+
             const style = document.createElement('style');
             style.textContent = `
             table {
@@ -58,29 +67,29 @@ class OctoratesCard extends HTMLElement {
                 text-align:center;
                 vertical-align: middle;
             }
-			td.time_darkred{
-                border-bottom: 1px solid Maroon;
+            td.time_darkred{
+                border-bottom: 1px solid var(--customDarkRed);
             }
             td.time_red{
-                border-bottom: 1px solid red;
+                border-bottom: 1px solid var(--customRed);
             }
             td.time_orange{
-                border-bottom: 1px solid orange;
+                border-bottom: 1px solid var(--customOrange);
             }
             td.time_green{
-                border-bottom: 1px solid MediumSeaGreen;
+                border-bottom: 1px solid var(--customLightGreen);
             }
             td.time_lightgreen {
-                border-bottom: 1px solid ForestGreen;
+                border-bottom: 1px solid var(--customGreen);
             }
             td.time_blue{
-                border-bottom: 1px solid #391CD9;
+                border-bottom: 1px solid var(--customBlue);
             }
             td.time_cheapest{
-                border-bottom: 1px solid LightGreen;
+                border-bottom: 1px solid var(--customCheapestGreen);
             }
             td.time_cheapestblue{
-                border-bottom: 1px solid LightBlue;
+                border-bottom: 1px solid var(--customCheapestBlue);
             }
             td.rate {
                 color:white;
@@ -91,41 +100,49 @@ class OctoratesCard extends HTMLElement {
                 border-top-right-radius:15px;
                 border-bottom-right-radius:15px;
             }
-			td.darkred {
-                border: 2px solid Maroon;
-                background-color: Maroon;
+            td.darkred {
+                border: 2px solid var(--customDarkRed);
+                background-color: var(--customDarkRed);
             }
             td.red {
-                border: 2px solid red;
-                background-color: red;
+                border: 2px solid var(--customRed);
+                background-color: var(--customRed);
             }
             td.orange {
-                border: 2px solid darkorange;
-                background-color: darkorange;
+                border: 2px solid var(--customOrange);
+                background-color: var(--customOrange);
             }
             td.green {
-                border: 2px solid MediumSeaGreen;
-                background-color: MediumSeaGreen;
+                border: 2px solid var(--customLightGreen);
+                background-color: var(--customLightGreen);
             }
             td.lightgreen {
-                border: 2px solid ForestGreen;
-                background-color: ForestGreen;
+                border: 2px solid var(--customGreen);
+                background-color: var(--customGreen);
             }
             td.blue {
-                border: 2px solid #391CD9;
-                background-color: #391CD9;
+                border: 2px solid var(--customBlue);
+                background-color: var(--customBlue);
             }
             td.cheapest {
                 color: black;
-                border: 2px solid LightGreen;
-                background-color: LightGreen;
+                border: 2px solid var(--customCheapestGreen);
+                background-color: var(--customCheapestGreen);
             }
             td.cheapestblue {
                 color: black;
-                border: 2px solid LightBlue;
-                background-color: LightBlue;
+                border: 2px solid var(--customCheapestBlue);
+                background-color: var(--customCheapestBlue);
             }
             `;
+            document.documentElement.style.setProperty('--customDarkRed', customDarkRed);
+            document.documentElement.style.setProperty('--customRed', customRed);
+            document.documentElement.style.setProperty('--customOrange', customOrange);
+            document.documentElement.style.setProperty('--customGreen', customGreen);
+            document.documentElement.style.setProperty('--customLightGreen', customLightGreen);
+            document.documentElement.style.setProperty('--customBlue', customBlue);
+            document.documentElement.style.setProperty('--customCheapestGreen', customCheapestGreen);
+            document.documentElement.style.setProperty('--customCheapestBlue', customCheapestBlue);
             card.appendChild(style);
             card.appendChild(this.content);
             this.appendChild(card);
@@ -327,7 +344,7 @@ class OctoratesCard extends HTMLElement {
         combinedRates.forEach(function (key) {
             const date_milli = Date.parse(key.start);
             var date = new Date(date_milli);
-			var current_rates_day = dayFormatter.format(date);
+            var current_rates_day = dayFormatter.format(date);
             rates_processingRow++;
             var ratesToEvaluate = key.value_inc_vat * multiplier;
 
@@ -413,7 +430,7 @@ class OctoratesCard extends HTMLElement {
             boldStyle = isTargetTime ? boldStyle + "time_highlight" : boldStyle + "";
             if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate > 0)) colour = colours[6];
             else if (cheapest && (valueToDisplay == cheapest_rate && cheapest_rate <= 0)) colour = colours[7];
-			else if (valueToDisplay > extremelimit) colour = colours[4]; //red (import) / green (export)
+            else if (valueToDisplay > extremelimit) colour = colours[4]; //red (import) / green (export)
             else if (valueToDisplay > highlimit) colour = colours[3]; //red (import) / green (export)
             else if (valueToDisplay > mediumlimit) colour = colours[2]; // orange (import) / orange (export)
             else if (valueToDisplay > lowlimit) colour = colours[0]; // lightgreen  (import) / red (export)
@@ -482,8 +499,8 @@ class OctoratesCard extends HTMLElement {
             hour12: true,
             // Controls the title of the card
             title: 'Agile Rates',
-            // Colour controls:
-			// If the price is above extremelimit, the row is marked darkred
+            // Colour thresholds:
+            // If the price is above extremelimit, the row is marked darkred
             // If the price is above highlimit, the row is marked red.
             // If the price is above mediumlimit, the row is marked orange.
             // If the price is above lowlimit, the row is marked dark green.
@@ -492,7 +509,16 @@ class OctoratesCard extends HTMLElement {
             lowlimit: 5,
             mediumlimit: 20,
             highlimit: 30,
-			extremelimit: 50,
+            extremelimit: 50,
+            // Custom colours
+            customDarkRed: 'Maroon',
+            customRed: 'red',
+            customOrange: 'orange',
+            customGreen: 'ForestGreen',
+            customLightGreen: 'MediumSeaGreen',
+            customBlue: '#391CD9',
+            customCheapestGreen: 'LightGreen',
+            customCheapestBlue: 'LightBlue',
             // Entity to use for dynamic limits, above are ignored if limitEntity is set. 
             limitEntity: null,
             highLimitMultiplier: 1.1,
