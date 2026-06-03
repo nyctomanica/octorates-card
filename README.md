@@ -160,7 +160,7 @@ Here's a breakdown of all available configuration items;
 | additionalDynamicLimits | Y | N/A       | List of additional limits to be displayed in the card. This is very similar to `targetTimesEntities` but it supports entities that have a single value state (for example an input number or a sensor). The color specified here takes precedence compared to the one in `targetTimesEntities`. |
 | customDarkRed  | Y   | Maroon  | Custom colour for prices above `extremelimit` |
 | customRed  | Y   | red  | Custom colour for prices above `highlimit` |
-| customOrange  | Y   | orange  | Custom colour for prices above `mediumlimit` |
+| customOrange  | Y   | DarkOrange  | Custom colour for prices above `mediumlimit` |
 | customGreen  | Y   | ForestGreen  | Custom colour for prices above `lowlimit` |
 | customLightGreen  | Y   | MediumSeaGreen  | Custom colour for prices above zero and below `lowlimit` |
 | customBlue  | Y   | #391CD9  | Custom colour for prices below zero |
