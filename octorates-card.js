@@ -513,7 +513,7 @@ class OctoratesCard extends HTMLElement {
             // Custom colours
             customDarkRed: 'Maroon',
             customRed: 'red',
-            customOrange: 'orange',
+            customOrange: 'DarkOrange',
             customGreen: 'ForestGreen',
             customLightGreen: 'MediumSeaGreen',
             customBlue: '#391CD9',
