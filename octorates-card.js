@@ -135,14 +135,14 @@ class OctoratesCard extends HTMLElement {
                 background-color: var(--customCheapestBlue);
             }
             `;
-            document.documentElement.style.setProperty('--customDarkRed', customDarkRed);
-            document.documentElement.style.setProperty('--customRed', customRed);
-            document.documentElement.style.setProperty('--customOrange', customOrange);
-            document.documentElement.style.setProperty('--customGreen', customGreen);
-            document.documentElement.style.setProperty('--customLightGreen', customLightGreen);
-            document.documentElement.style.setProperty('--customBlue', customBlue);
-            document.documentElement.style.setProperty('--customCheapestGreen', customCheapestGreen);
-            document.documentElement.style.setProperty('--customCheapestBlue', customCheapestBlue);
+            card.style.setProperty('--customDarkRed', customDarkRed);
+            card.style.setProperty('--customRed', customRed);
+            card.style.setProperty('--customOrange', customOrange);
+            card.style.setProperty('--customGreen', customGreen);
+            card.style.setProperty('--customLightGreen', customLightGreen);
+            card.style.setProperty('--customBlue', customBlue);
+            card.style.setProperty('--customCheapestGreen', customCheapestGreen);
+            card.style.setProperty('--customCheapestBlue', customCheapestBlue);
             card.appendChild(style);
             card.appendChild(this.content);
             this.appendChild(card);
