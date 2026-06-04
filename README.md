@@ -13,8 +13,6 @@ Compared to lozzd's card, this version adds:
 * Fully customisable slot colours, so you can really make it yours!
 * Nicer card padding for use without margins
 
-However, it also BREAKS export rates (for now), so I'd only recommend using this for import!
-
 ![screenshot_2](assets/NewImport.png)
 ---
 
@@ -206,8 +204,6 @@ Note that it is possible for you to mix and match fixed values and entities as y
 #### More screenshots
 ![screenshot_1](assets/NewImportWithTitle.png)
 ![screenshot_2](assets/NewExport.png)
-
-*todo: fix colours for export, as I don't have export!*
 
 ##### Advanced Configurations
 
